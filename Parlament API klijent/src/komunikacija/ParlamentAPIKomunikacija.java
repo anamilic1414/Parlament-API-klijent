@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import poslanik.Poslanik;
 
@@ -24,7 +25,7 @@ public class ParlamentAPIKomunikacija {
 	private static final String poslanikURL = "http://147.91.128.71:9090/parlament/api/members";
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.");
 	
-	public List<Poslanik> vratiPoslanike() throws ParseException{
+	public static List<Poslanik> vratiPoslanike() throws ParseException{
 		
 			LinkedList<Poslanik> poslanici = new LinkedList<Poslanik>();
 		try {
@@ -54,11 +55,11 @@ public class ParlamentAPIKomunikacija {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return poslanici;
+		return new LinkedList<Poslanik>();
 		
 	}
 	
-	private String sendGet(String poslanikUrl) throws IOException{
+	private static String sendGet(String poslanikUrl) throws IOException{
 		URL url = new URL(poslanikUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		
@@ -80,5 +81,34 @@ public class ParlamentAPIKomunikacija {
 	
 		return nastavak.toString();
 	}
+	
+	public static JsonArray vratiUJson() throws Exception{
+		
+		return new GsonBuilder().setPrettyPrinting().create().fromJson(sendGet(poslanikURL), JsonArray.class);
+		
+	}
+	
+	public static JsonArray serijalizacijaPoslanika(List<Poslanik> poslanici){
+		JsonArray json = new JsonArray();
+		
+		JsonObject objekat = null;
+		for (int i = 0; i < poslanici.size(); i++) {
+			Poslanik p = poslanici.get(i);
+			
+			objekat = new JsonObject();
+			objekat.addProperty("id", p.getId());
+			objekat.addProperty("ime",p.getIme());
+			objekat.addProperty("prezime", p.getPrezime());
+			if(p.getDatumRodjenja() !=null)
+				objekat.addProperty("datumRodjenja", sdf.format(p.getDatumRodjenja()));
+			
+			json.add(objekat);
+		}
+		return json;
+	}
+	
+	
+	
+	
 	
 }

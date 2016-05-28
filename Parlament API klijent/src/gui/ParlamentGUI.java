@@ -10,9 +10,15 @@ import javax.swing.JButton;
 import java.awt.Dimension;
 import java.awt.Color;
 import javax.swing.border.TitledBorder;
+
+import gui.model.TableModel;
+import poslanik.Poslanik;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTable;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ParlamentGUI extends JFrame {
 
@@ -58,6 +64,11 @@ public class ParlamentGUI extends JFrame {
 	private JButton getBtnPoslanici() {
 		if (btnPoslanici == null) {
 			btnPoslanici = new JButton("GET members");
+			btnPoslanici.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GUIKontroler.vratiUJson();
+				}
+			});
 			btnPoslanici.setPreferredSize(new Dimension(135, 25));
 		}
 		return btnPoslanici;
@@ -65,6 +76,11 @@ public class ParlamentGUI extends JFrame {
 	private JButton getBtnFillTable() {
 		if (btnFillTable == null) {
 			btnFillTable = new JButton("Fill table");
+			btnFillTable.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					GUIKontroler.napuniTabelu();
+				}
+			});
 			btnFillTable.setPreferredSize(new Dimension(135, 25));
 		}
 		return btnFillTable;
@@ -72,6 +88,12 @@ public class ParlamentGUI extends JFrame {
 	private JButton getBtnUpdateMembers() {
 		if (btnUpdateMembers == null) {
 			btnUpdateMembers = new JButton("Update members");
+			btnUpdateMembers.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					GUIKontroler.izTabeleUListu(table);
+					GUIKontroler.update(GUIKontroler.vratiPoslanike());
+				}
+			});
 			btnUpdateMembers.setPreferredSize(new Dimension(135, 25));
 		}
 		return btnUpdateMembers;
@@ -93,7 +115,7 @@ public class ParlamentGUI extends JFrame {
 		}
 		return scrollPane;
 	}
-	private JTextArea getTextArea() {
+	public JTextArea getTextArea() {
 		if (textArea == null) {
 			textArea = new JTextArea();
 		}
@@ -106,7 +128,7 @@ public class ParlamentGUI extends JFrame {
 		}
 		return scrollPane_1;
 	}
-	private JTable getTable() {
+	public JTable getTable() {
 		if (table == null) {
 			table = new JTable();
 			table.setModel(new gui.model.TableModel(GUIKontroler.vratiPoslanike()));
@@ -117,4 +139,12 @@ public class ParlamentGUI extends JFrame {
 		}
 		return table;
 	}
+
+	public void osveziTabelu() {
+		TableModel model = (TableModel) table.getModel();
+		model.ucitajTabelu(GUIKontroler.vratiPoslanike());
+		
+	}
+	
+	
 }
